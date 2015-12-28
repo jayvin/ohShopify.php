@@ -13,9 +13,7 @@ class ShopifyClient {
 		$this->token = $token;
 		$this->api_key = $api_key;
 		$this->secret = $secret;
-		if($this->token == null){
-            $this->isPrivateApp = true;
-        }
+		$this->isPrivateApp = $this->token == null;
 	}
 
 	// Get the URL required to request authorization
@@ -64,11 +62,10 @@ class ShopifyClient {
 		$payload = in_array($method, array('POST','PUT')) ? json_encode($params) : array();
 		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
 
-		if(!$this->isPrivateApp)
-        {
-          // add auth headers for public app
+		if(!$this->isPrivateApp){
+		  // add auth headers for public app
 		  $request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
-        }
+		}
 
 		$response = $this->curlHttpApiRequest($method, $url, $query, $payload, $request_headers);
 		$response = json_decode($response, true);
